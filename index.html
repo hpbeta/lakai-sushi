@@ -1,0 +1,759 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lakai Sushi | Cardápio Digital</title>
+
+<style>
+:root {
+  --vermelho: #ed171f;
+  --preto: #080808;
+  --card: #171717;
+  --branco: #fff;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--preto);
+  color: var(--branco);
+  font-family: Arial, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+.logo-titulo {
+  text-align: center;
+  margin: 20px 0;
+  letter-spacing: 5px;
+}
+
+.logo-titulo h1 {
+  font-size: 30px;
+}
+
+.logo-titulo p {
+  color: var(--vermelho);
+  letter-spacing: 4px;
+  margin-top: 8px;
+}
+
+/* CATEGORIAS */
+
+.categorias {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 15px 0;
+}
+
+.categorias a {
+  color: white;
+  text-decoration: none;
+  white-space: nowrap;
+  border: 1px solid var(--vermelho);
+  padding: 12px 18px;
+  border-radius: 25px;
+  transition: .2s;
+}
+
+.categorias a:hover {
+  background: var(--vermelho);
+}
+
+/* PRODUTOS */
+
+.secao {
+  margin: 35px 0;
+  scroll-margin-top: 15px;
+}
+
+.secao h2 {
+  font-size: 25px;
+  margin-bottom: 18px;
+  border-left: 5px solid var(--vermelho);
+  padding-left: 12px;
+}
+
+.produtos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 18px;
+}
+
+.produto {
+  background: var(--card);
+  border: 1px solid #333;
+  border-radius: 14px;
+  overflow: hidden;
+  transition: .2s;
+}
+
+.produto:hover {
+  transform: translateY(-4px);
+  border-color: var(--vermelho);
+}
+
+.produto img {
+  width: 100%;
+  height: 165px;
+  object-fit: cover;
+}
+
+.produto-info {
+  padding: 14px;
+}
+
+.produto h3 {
+  font-size: 17px;
+  margin-bottom: 9px;
+}
+
+.descricao {
+  color: #ccc;
+  font-size: 13px;
+  line-height: 1.5;
+  min-height: 55px;
+}
+
+.preco {
+  color: var(--vermelho);
+  font-size: 22px;
+  font-weight: bold;
+  margin: 14px 0;
+}
+
+.botao-comprar {
+  background: var(--vermelho);
+  color: white;
+  border: none;
+  padding: 12px;
+  width: 100%;
+  border-radius: 9px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.botao-comprar:hover {
+  background: #bd1017;
+}
+
+/* CARRINHO */
+
+.carrinho {
+  position: sticky;
+  bottom: 0;
+  background: #171717;
+  border: 1px solid #444;
+  border-radius: 15px;
+  padding: 17px;
+  margin: 25px 0;
+  box-shadow: 0 0 20px #000;
+  z-index: 10;
+}
+
+.carrinho-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.total {
+  color: var(--vermelho);
+  font-size: 23px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.lista-carrinho {
+  margin-top: 15px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.item-carrinho {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid #333;
+  font-size: 13px;
+}
+
+.quantidade {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantidade button {
+  background: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.whatsapp {
+  background: #0b9d45;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 15px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.whatsapp:hover {
+  background: #087c36;
+}
+
+.rodape {
+  text-align: center;
+  color: #aaa;
+  padding: 25px 10px;
+  font-size: 13px;
+}
+
+/* CELULAR */
+
+@media (max-width: 600px) {
+  .capa {
+    height: 300px;
+  }
+
+  .container {
+    padding: 12px;
+  }
+
+  .produtos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .produto img {
+    height: 115px;
+  }
+
+  .produto-info {
+    padding: 10px;
+  }
+
+  .produto h3 {
+    font-size: 14px;
+  }
+
+  .descricao {
+    font-size: 12px;
+    min-height: 75px;
+  }
+
+  .preco {
+    font-size: 18px;
+  }
+
+  .botao-comprar {
+    font-size: 13px;
+  }
+
+  .whatsapp {
+    width: 100%;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- CAPA -->
+<header class="capa" aria-label="Lakai Sushi"></header>
+
+<div class="container">
+
+  <div class="logo-titulo">
+    <h1>LAKAI SUSHI</h1>
+    <p>CARDÁPIO DIGITAL</p>
+  </div>
+
+  <p style="text-align:center;color:#bbb;margin-bottom:15px">
+    Escolha seus favoritos e peça pelo WhatsApp!
+  </p>
+
+  <!-- CATEGORIAS -->
+  <nav class="categorias" id="categorias"></nav>
+
+  <!-- PRODUTOS -->
+  <main id="cardapio"></main>
+
+  <!-- CARRINHO -->
+  <div class="carrinho">
+    <div class="carrinho-topo">
+      <div>
+        <h3>🛒 Meu Carrinho</h3>
+        <p id="contador">0 produtos</p>
+        <div class="total" id="total">R$ 0,00</div>
+      </div>
+
+      <button class="whatsapp" onclick="finalizarPedido()">
+        🟢 Finalizar pelo WhatsApp
+      </button>
+    </div>
+
+    <div class="lista-carrinho" id="listaCarrinho">
+      Seu carrinho está vazio.
+    </div>
+  </div>
+
+  <footer class="rodape">
+    LAKAI SUSHI © 2026<br>
+    Sabor • Qualidade • Tradição
+  </footer>
+
+</div>
+
+<script>
+
+/* CONFIGURAÇÕES */
+
+const WHATSAPP = "5531920098048";
+
+
+/* PRODUTOS */  
+
+const produtos = [
+
+{
+categoria:"Peças a R$ 1",
+nome:"Combo - 38 Peças",
+preco:38.00,
+descricao:"38 Peças R$38,00 a partir de 39 reais 8 Maki Couve 8 Maki Geleia Pimenta 8 Maki Doritos 8 Maki Pimenta Biquinho 6 Hot Filadélfia Não Acompanha Molhos",
+img:"img/38-pecas.png"
+},
+   
+
+{
+categoria:"Peças a R$ 1",
+nome:"Combo 1 — 40 peças",
+preco:40.00,
+descricao:"Combo 1 40 peças = R$40,00 (não acompanha molhos) a partir de 41 reais Serve até 2 pessoas 3 niguiri salmão 3 niguiri skin 6 maki salmão grelhado 6 maki kani 7 Uramaki Califórnia 4 uramaki skin 4 maki geleia de pimenta 7 hot filadelfia",
+img:"img/combo-1-40.png"
+},
+{
+categoria:"Peças a R$ 1",
+nome:"Combo 2 — 40 peças",
+preco:40.00,
+descricao:"Combo 2 40 peças = R$40,00 (não acompanha molhos) a partir de 41 reais Serve até 2 pessoas 5 tortinha salmão grelhado 5 maki salmão 5 maki kani 5maki skin 5 maki salmão grelhado 5 Uramaki Califórnia 10 hot Filadélfia",
+img:"img/combo-2-40.png"
+},
+ 
+{
+categoria:"Peças a R$ 1",
+nome:"Combo 1 — 60 peças",
+preco:60.00,
+descricao:"Combo 1 60 peças = R$60,00 (não acompanha molhos) a partir de 61 reais Serve até 3 pessoas 10 uramaki skin 10 uramaki California 10 uramaki geleia de pimenta 10 maki salmão grelhado 8 maki filadelfia 12 hot",
+img:"img/combo-1-60.png"
+},
+{
+categoria:"Peças a R$ 1",
+nome:"Combo 2 — 60 peças",
+preco:60.00,
+descricao:"Combo 2 60 peças R$60,00 (não acompanha molhos) a partir de 61 reais Serve até 3 pessoas 10 maki salmão 10 maki Filadélfia 10 maki salmão grelhado 10 Uramaki salmão grelhado 10 uramaki skin 5 maki geleia de pimenta 5 maki Doritos",
+img:"img/combo-2-60.png"
+},
+
+{
+categoria:"Combinados Especiais",
+nome:"57 Peças",
+preco:57.00,
+descricao:"57 Peças R$57,00 a partir de 58 reais 10 maki Filadélfia 12 hot Filadélfia 10 uramaki pimenta biquinho 5 uramaki Califórnia 10 uramaki geleia 10 uramaki grelhado Não Acompanha Molhos",
+img:"img/57-pecas.png"
+},
+{
+categoria:"Combinados Especiais",
+nome:"40 Peças",
+preco:59.90,
+descricao:"40 peças R$40,00 a partir de 60 reais e 90 centavos 3 niguiri salmão 3 niguiri skin 10 creme Cheese e geleia de pimenta 10 creme Cheese e pimenta biquinho 4 uramaki Califórnia 5 uramaki grelhado 5 maki couve Não Acompanha Molhos",
+img:"img/combo-especial-40-pecas.png"
+},
+
+{
+categoria:"Combinados Especiais",
+nome:"100 Peças",
+preco:109.90,
+descricao:"100 Peças a partir de 110 reais e 90 centavos 7 niguiri salmão 7 niguiri skin 12 maki grelhado 12 maki skin 10 uramaki grelhado 10 uramaki Califórnia 10 geleia de pimenta 10 pimenta biquinho 10 couve 12 hot Filadélfia Não Acompanha Molhos",
+img:"img/100-pecas.png"
+},
+{
+categoria:"Combinados Especiais",
+nome:"50 Peças",
+preco:64.90,
+descricao:"50 peças R$50,00 a partir de 65 reais e 90 centavos 10 Maki grelhado 10 uramaki grelhado 10 uramaki gelaia de pimenta 10 uramaki pimenta biquinho 10 uramaki couve Não Acompanha Molhos",
+img:"img/50-pecas.png"
+},
+
+{
+categoria:"Combos Gourmet",
+nome:"Combo Gourmet — 20 peças",
+preco:79.90,
+descricao:"Combo gourmet 20 pçs a partir de 80 reais e 90 centavos 4 sashimi de salmão 4 niguiri de salmão 6 joy cream cheese 6 maki filadélfia",
+img:"img/20.png"
+},
+{
+categoria:"Combos Gourmet",
+nome:"9 Joy Variados",
+preco:59.90,
+descricao:"9 Joy variados 59 reais e 90 centavos 3 joy cream cheese 3 joy tartar de salmão 3 joy crispy de couve",
+img:"img/joy.png"
+},
+{
+categoria:"Combos Gourmet",
+nome:"Combo Gourmet — 34 peças",
+preco:117.90,
+descricao:"Combo gourmet 34 pçs a partir de 118 reais e 90 centavos 4 sashimi salmão 4 ninguiri salmão 4 niguiri salmão maçaricado 4 joy tartar de salmão maçaricado 4 joy geléia de pimenta 4 uramaki filadélfia 5 hot Doritos 5 hot crispy de couve",
+img:"img/34-gourmet.png"
+},
+
+{
+categoria:"Hot",
+nome:"Hot Crispy de Couve — 12 peças",
+preco:24.90,
+descricao:"12 hot crispy de couve.",
+img:"img/couve.png"
+
+},
+{
+categoria:"Hot",
+nome:"Hot Variado — 12 peças",
+preco:24.90,
+descricao:"12 peças de hot variado.",
+img:"img/hot-variado.png"
+},
+{
+categoria:"Hot",
+nome:"Hot Doritos — 12 peças",
+preco:24.90,
+descricao:"12 hot Doritos.",
+img:"img/hot-doritos.png"
+},
+
+{
+categoria:"Big Hot",
+nome:"Big Hot Filadélfia",
+preco:47.90,
+descricao:"Hot roll aberto ao meio, recheado com cream cheese e salmão, finalizado com cebolinha.",
+img:"img/hot-fila.png" 
+},
+{
+categoria:"Big Hot",
+nome:"Big Hot Gourmet",
+preco:49.90,
+descricao:"Hot roll com cream cheese, salmão, geleia de pimenta e crispy de couve.",
+img:"img/hot-couve.png"
+},
+{
+categoria:"Big Hot",
+nome:"Big Hot Salmão Grelhado",
+preco:38.90,
+descricao:"Hot roll empanado e frito, recheado com salmão grelhado e cream cheese.",
+img:"img/hot-grelhado.png"
+},
+
+{
+categoria:"Temaki",
+nome:"Temaki Filadélfia",
+preco:37.90,
+descricao:"Salmão fresco com cream cheese e cebolinha.",
+img:"img/temaki-fila.png"
+},
+{
+categoria:"Temaki",
+nome:"Temaki Salmão",
+preco:38.90,
+descricao:"Salmão fresco finalizado com gergelim.",
+img:"img/temaki-sal.png"
+},
+{
+categoria:"Temaki",
+nome:"Temaki Salmão Grelhado",
+preco:34.90,
+descricao:"Salmão grelhado com cream cheese e cebolinha.",
+img:"img/temaki-grelhado.png"
+},  
+{
+categoria:"Temaki",
+nome:"Temaki Hot",
+preco:36.90,
+descricao:"Salmão grelhado com cream cheese, empanado na farinha panko e frito.",
+img:"img/temaki-hot.png"
+},
+
+{
+categoria:"Turbine Seu Pedido",
+nome:"Niguiri Salmão — 3 unidades",
+preco:11.90,
+descricao:"3 unidades de niguiri de salmão.",
+img:"img/nig-salm.png"
+},
+{
+categoria:"Turbine Seu Pedido",
+nome:"Sashimi Salmão — 5 unidades",
+preco:32.90,
+descricao:"5 unidades de sashimi de salmão fresco.",
+img:"img/sashimi.png"
+},
+{
+categoria:"Turbine Seu Pedido",
+nome:"Joy Geleia de Pimenta — 3 unidades",
+preco:15.90,
+descricao:"3 unidades.",
+img:"img/joy-geleia.png"
+},
+{
+categoria:"Turbine Seu Pedido",
+nome:"Joy Tartar de Salmão — 3 unidades",
+preco:16.90,
+descricao:"3 unidades.",
+img:"img/joy-tartar.png"
+},
+{
+categoria:"Turbine Seu Pedido",
+nome:"Joy Cream Cheese — 3 unidades",
+preco:14.90,
+descricao:"3 unidades finalizadas com cream cheese.",
+img:"img/joy-cream-cheese.png"
+},
+
+];
+
+/* CARRINHO */
+
+let carrinho = {};
+
+/* MOEDA */
+
+function moeda(valor) {
+  return valor.toLocaleString("pt-BR", {
+    style:"currency",
+    currency:"BRL"
+  });
+}
+
+/* GERAR CARDÁPIO */
+
+function carregarCardapio() {
+
+  const categorias = [...new Set(
+    produtos.map(p => p.categoria)
+  )];
+
+  const nav = document.getElementById("categorias");
+  const cardapio = document.getElementById("cardapio");
+
+  nav.innerHTML = categorias.map((categoria, i) => `
+    <a href="#categoria-${i}">
+      ${categoria}
+    </a>
+  `).join("");
+
+  cardapio.innerHTML = categorias.map((categoria, i) => {
+
+    const itens = produtos.map((produto, index) => {
+
+      if (produto.categoria !== categoria) return "";
+
+      return `
+        <article class="produto">
+
+          <img
+            src="${produto.img}"
+            alt="${produto.nome}"
+            loading="lazy"
+          >
+
+          <div class="produto-info">
+
+            <h3>${produto.nome}</h3>
+
+            <p class="descricao">
+              ${produto.descricao}
+            </p>
+
+            <div class="preco">
+              ${moeda(produto.preco)}
+            </div>
+
+            <button
+              class="botao-comprar"
+              onclick="adicionar(${index})"
+            >
+              🛒 Adicionar
+            </button>
+
+          </div>
+        </article>
+      `;
+
+    }).join("");
+
+    return `
+      <section class="secao" id="categoria-${i}">
+        <h2>${categoria}</h2>
+        <div class="produtos">
+          ${itens}
+        </div>
+      </section>
+    `;
+
+  }).join("");
+
+}
+
+/* ADICIONAR PRODUTO */
+
+function adicionar(index) {
+
+  carrinho[index] = (carrinho[index] || 0) + 1;
+
+  atualizarCarrinho();
+
+}
+
+/* ALTERAR QUANTIDADE */
+
+function alterarQuantidade(index, valor) {
+
+  carrinho[index] += valor;
+
+  if (carrinho[index] <= 0) {
+    delete carrinho[index];
+  }
+
+  atualizarCarrinho();
+
+}
+
+/* ATUALIZAR CARRINHO */
+
+function atualizarCarrinho() {
+
+  const lista = document.getElementById("listaCarrinho");
+
+  let total = 0;
+  let quantidadeTotal = 0;
+  let html = "";
+
+  for (const index in carrinho) {
+
+    const produto = produtos[index];
+    const quantidade = carrinho[index];
+
+    const subtotal = produto.preco * quantidade;
+
+    total += subtotal;
+    quantidadeTotal += quantidade;
+
+    html += `
+      <div class="item-carrinho">
+
+        <div>
+          ${produto.nome}<br>
+          <strong>${moeda(subtotal)}</strong>
+        </div>
+
+        <div class="quantidade">
+
+          <button onclick="alterarQuantidade(${index}, -1)">
+            −
+          </button>
+
+          ${quantidade}
+
+          <button onclick="alterarQuantidade(${index}, 1)">
+            +
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  }
+
+  lista.innerHTML = html || "Seu carrinho está vazio.";
+
+  document.getElementById("total").innerText = moeda(total);
+
+  document.getElementById("contador").innerText =
+    quantidadeTotal + " produto(s)";
+
+}
+
+/* FINALIZAR NO WHATSAPP */
+
+function finalizarPedido() {
+
+  const indices = Object.keys(carrinho);
+
+  if (indices.length === 0) {
+    alert("Adicione produtos ao carrinho primeiro!");
+    return;
+  }
+
+  let mensagem =
+    "Olá, Lakai Sushi! Gostaria de fazer meu pedido:\n\n";
+
+  let total = 0;
+
+  indices.forEach(index => {
+
+    const produto = produtos[index];
+    const quantidade = carrinho[index];
+
+    const subtotal = produto.preco * quantidade;
+
+    total += subtotal;
+
+    mensagem +=
+      `${quantidade}x ${produto.nome} - ${moeda(subtotal)}\n`;
+
+  });
+
+  mensagem +=
+    `\nTOTAL: ${moeda(total)}` +
+    "\n\nAguardo confirmação do pedido!";
+
+  const link =
+    "https://wa.me/" +
+    WHATSAPP +
+    "?text=" +
+    encodeURIComponent(mensagem);
+
+  window.open(link, "_blank");
+
+}
+
+/* INICIAR */
+
+carregarCardapio();
+atualizarCarrinho();
+
+</script>
+
+</body>
+</html>
