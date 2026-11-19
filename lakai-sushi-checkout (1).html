@@ -276,6 +276,50 @@ body {
     width: 100%;
   }
 }
+
+/* CHECKOUT */
+.checkout-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.82);
+  z-index: 1000;
+  padding: 18px;
+  overflow-y: auto;
+}
+.checkout-overlay.ativo { display: flex; justify-content: center; align-items: flex-start; }
+.checkout {
+  width: 100%;
+  max-width: 680px;
+  margin: 20px auto;
+  background: #151515;
+  border: 1px solid #444;
+  border-radius: 16px;
+  padding: 22px;
+}
+.checkout-topo { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+.checkout-fechar { background:#333; color:#fff; border:0; border-radius:8px; padding:9px 13px; cursor:pointer; }
+.checkout h3 { margin: 18px 0 10px; color:#fff; }
+.checkout-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.checkout input, .checkout select, .checkout textarea {
+  width:100%; padding:12px; border:1px solid #444; border-radius:8px;
+  background:#222; color:#fff; font:inherit; margin-bottom:10px;
+}
+.checkout textarea { min-height:75px; resize:vertical; }
+.checkout label { display:block; color:#ddd; font-size:14px; margin:5px 0 7px; }
+.checkout-opcoes { display:flex; flex-wrap:wrap; gap:14px; margin:8px 0 14px; }
+.checkout-opcoes label { display:flex; align-items:center; gap:7px; margin:0; }
+.checkout-opcoes input { width:auto; margin:0; accent-color:var(--vermelho); }
+.checkout-resumo { background:#222; border-radius:10px; padding:14px; margin:12px 0; line-height:1.8; }
+.checkout-resumo .linha-total { display:flex; justify-content:space-between; font-weight:bold; font-size:19px; border-top:1px solid #444; padding-top:8px; margin-top:8px; }
+.checkout-aviso { color:#80e6a5; font-size:13px; margin:6px 0 12px; }
+.checkout .whatsapp { width:100%; }
+@media (max-width:600px) {
+  .checkout-overlay { padding:8px; }
+  .checkout { padding:16px; margin:8px auto; }
+  .checkout-grid { grid-template-columns:1fr; gap:0; }
+}
+
 </style>
 </head>
 
@@ -318,6 +362,64 @@ body {
     <div class="lista-carrinho" id="listaCarrinho">
       Seu carrinho está vazio.
     </div>
+  </div>
+
+
+  <!-- CHECKOUT DO PEDIDO -->
+  <div class="checkout-overlay" id="checkoutOverlay">
+    <section class="checkout" role="dialog" aria-modal="true" aria-labelledby="checkoutTitulo">
+      <div class="checkout-topo">
+        <h2 id="checkoutTitulo">Finalizar pedido</h2>
+        <button class="checkout-fechar" type="button" onclick="fecharCheckout()">Fechar ✕</button>
+      </div>
+
+      <form id="formCheckout" onsubmit="enviarPedidoWhatsApp(event)">
+        <h3>1. Seus dados</h3>
+        <div class="checkout-grid">
+          <input id="clienteNome" type="text" placeholder="Nome completo" required>
+          <input id="clienteTelefone" type="tel" placeholder="Telefone / WhatsApp" required>
+        </div>
+
+        <h3>2. Como deseja receber?</h3>
+        <div class="checkout-opcoes">
+          <label><input type="radio" name="tipoEntrega" value="Entrega" checked onchange="alternarEndereco()"> Receber em casa</label>
+          <label><input type="radio" name="tipoEntrega" value="Retirada" onchange="alternarEndereco()"> Retirar no restaurante</label>
+        </div>
+
+        <div id="camposEndereco">
+          <p class="checkout-aviso">Entrega grátis em todos os bairros!</p>
+          <div class="checkout-grid">
+            <input id="enderecoCep" type="text" placeholder="CEP">
+            <input id="enderecoBairro" type="text" placeholder="Bairro" required>
+            <input id="enderecoRua" type="text" placeholder="Rua / Avenida" required>
+            <input id="enderecoNumero" type="text" placeholder="Número" required>
+          </div>
+          <input id="enderecoComplemento" type="text" placeholder="Complemento (apartamento, bloco etc.)">
+          <input id="enderecoReferencia" type="text" placeholder="Ponto de referência">
+        </div>
+
+        <h3>3. Forma de pagamento</h3>
+        <select id="formaPagamento" required onchange="alternarTroco()">
+          <option value="">Selecione a forma de pagamento</option>
+          <option value="Pix">Pix</option>
+          <option value="Dinheiro">Dinheiro</option>
+          <option value="Cartão de crédito">Cartão de crédito</option>
+          <option value="Cartão de débito">Cartão de débito</option>
+        </select>
+
+        <div id="campoTroco" style="display:none">
+          <label for="trocoPara">Troco para quanto? (deixe em branco se não precisar)</label>
+          <input id="trocoPara" type="number" min="0" step="0.01" placeholder="Ex.: 100,00">
+        </div>
+
+        <h3>4. Observações</h3>
+        <textarea id="observacoesPedido" placeholder="Alguma observação sobre o pedido?"></textarea>
+
+        <h3>5. Resumo</h3>
+        <div class="checkout-resumo" id="resumoCheckout"></div>
+        <button class="whatsapp" type="submit">🟢 Confirmar e enviar pelo WhatsApp</button>
+      </form>
+    </section>
   </div>
 
   <footer class="rodape">
@@ -704,48 +806,131 @@ function atualizarCarrinho() {
 
 }
 
-/* FINALIZAR NO WHATSAPP */
+/* CHECKOUT E FINALIZAÇÃO */
+
+function calcularTotalCarrinho() {
+  return Object.keys(carrinho).reduce((total, index) => {
+    return total + produtos[index].preco * carrinho[index];
+  }, 0);
+}
 
 function finalizarPedido() {
-
-  const indices = Object.keys(carrinho);
-
-  if (indices.length === 0) {
+  if (Object.keys(carrinho).length === 0) {
     alert("Adicione produtos ao carrinho primeiro!");
     return;
   }
+  document.getElementById("resumoCheckout").innerHTML = montarResumoHTML();
+  document.getElementById("checkoutOverlay").classList.add("ativo");
+  document.body.style.overflow = "hidden";
+}
 
-  let mensagem =
-    "Olá, Lakai Sushi! Gostaria de fazer meu pedido:\n\n";
+function fecharCheckout() {
+  document.getElementById("checkoutOverlay").classList.remove("ativo");
+  document.body.style.overflow = "";
+}
 
-  let total = 0;
-
-  indices.forEach(index => {
-
+function montarResumoHTML() {
+  let linhas = "";
+  for (const index in carrinho) {
     const produto = produtos[index];
     const quantidade = carrinho[index];
+    linhas += `<div>${quantidade}x ${produto.nome} — ${moeda(produto.preco * quantidade)}</div>`;
+  }
+  const total = calcularTotalCarrinho();
+  return linhas +
+    `<div>Subtotal: ${moeda(total)}</div>` +
+    `<div>Entrega: <strong>Grátis (R$ 0,00)</strong></div>` +
+    `<div class="linha-total"><span>Total</span><span>${moeda(total)}</span></div>`;
+}
 
-    const subtotal = produto.preco * quantidade;
-
-    total += subtotal;
-
-    mensagem +=
-      `${quantidade}x ${produto.nome} - ${moeda(subtotal)}\n`;
-
+function alternarEndereco() {
+  const tipo = document.querySelector('input[name="tipoEntrega"]:checked').value;
+  const campos = document.getElementById("camposEndereco");
+  campos.style.display = tipo === "Entrega" ? "block" : "none";
+  ["enderecoBairro", "enderecoRua", "enderecoNumero"].forEach(id => {
+    document.getElementById(id).required = tipo === "Entrega";
   });
+}
 
-  mensagem +=
-    `\nTOTAL: ${moeda(total)}` +
-    "\n\nAguardo confirmação do pedido!";
+function alternarTroco() {
+  const dinheiro = document.getElementById("formaPagamento").value === "Dinheiro";
+  document.getElementById("campoTroco").style.display = dinheiro ? "block" : "none";
+}
 
-  const link =
-    "https://wa.me/" +
-    WHATSAPP +
-    "?text=" +
-    encodeURIComponent(mensagem);
+function enviarPedidoWhatsApp(event) {
+  event.preventDefault();
 
-  window.open(link, "_blank");
+  const nome = document.getElementById("clienteNome").value.trim();
+  const telefone = document.getElementById("clienteTelefone").value.trim();
+  const tipo = document.querySelector('input[name="tipoEntrega"]:checked').value;
+  const pagamento = document.getElementById("formaPagamento").value;
+  const observacoes = document.getElementById("observacoesPedido").value.trim();
+  const total = calcularTotalCarrinho();
 
+  if (!nome || !telefone || !pagamento) {
+    alert("Preencha seus dados e escolha a forma de pagamento.");
+    return;
+  }
+
+  let mensagem = "Olá, Lakai Sushi! Gostaria de confirmar meu pedido:\n\n";
+  mensagem += "DADOS DO CLIENTE\n";
+  mensagem += `Nome: ${nome}\nTelefone: ${telefone}\n\n`;
+  mensagem += `RECEBIMENTO: ${tipo}\n`;
+
+  if (tipo === "Entrega") {
+    const bairro = document.getElementById("enderecoBairro").value.trim();
+    const rua = document.getElementById("enderecoRua").value.trim();
+    const numero = document.getElementById("enderecoNumero").value.trim();
+    const cep = document.getElementById("enderecoCep").value.trim();
+    const complemento = document.getElementById("enderecoComplemento").value.trim();
+    const referencia = document.getElementById("enderecoReferencia").value.trim();
+
+    mensagem += `Endereço: ${rua}, ${numero} - ${bairro}\n`;
+    if (cep) mensagem += `CEP: ${cep}\n`;
+    if (complemento) mensagem += `Complemento: ${complemento}\n`;
+    if (referencia) mensagem += `Referência: ${referencia}\n`;
+    mensagem += "Taxa de entrega: GRÁTIS\n";
+  }
+
+  mensagem += "\nPEDIDO\n";
+  for (const index in carrinho) {
+    const produto = produtos[index];
+    const quantidade = carrinho[index];
+    mensagem += `${quantidade}x ${produto.nome} - ${moeda(produto.preco * quantidade)}\n`;
+  }
+
+  mensagem += `\nPagamento: ${pagamento}\n`;
+  if (pagamento === "Dinheiro") {
+    const troco = document.getElementById("trocoPara").value.trim();
+    mensagem += troco ? `Troco para: ${moeda(Number(troco))}\n` : "Não precisa de troco\n";
+  }
+  if (observacoes) mensagem += `Observações: ${observacoes}\n`;
+
+  mensagem += `\nSubtotal: ${moeda(total)}\nEntrega: Grátis\nTOTAL: ${moeda(total)}`;
+  mensagem += "\n\nAguardo a confirmação do pedido!";
+
+  const link = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(mensagem);
+  const abaWhatsApp = window.open(link, "_blank");
+
+  // Fecha o formulário de endereço/pagamento e mostra a confirmação.
+  document.querySelector(".checkout").innerHTML = `
+    <div style="text-align:center;padding:28px 12px">
+      <div style="font-size:58px;margin-bottom:12px">✅</div>
+      <h2 style="color:#80e6a5;margin-bottom:12px">Pedido preparado!</h2>
+      <p style="color:#ddd;line-height:1.6;margin-bottom:10px">
+        Seus dados e seu pedido foram organizados no WhatsApp do Lakai Sushi.
+      </p>
+      <p style="color:#aaa;font-size:14px;line-height:1.5;margin-bottom:22px">
+        Se o WhatsApp não abriu, verifique se o navegador bloqueou a nova aba.
+        Para concluir, toque em <strong>Enviar</strong> na conversa.
+      </p>
+      <button class="whatsapp" type="button" onclick="fecharCheckout()">Concluído</button>
+    </div>
+  `;
+
+  if (!abaWhatsApp) {
+    alert("O navegador bloqueou a abertura do WhatsApp. Permita pop-ups para este site e tente novamente.");
+  }
 }
 
 /* INICIAR */
