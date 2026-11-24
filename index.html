@@ -382,12 +382,28 @@ body {
 
         <h3>2. Como deseja receber?</h3>
         <div class="checkout-opcoes">
-          <label><input type="radio" name="tipoEntrega" value="Entrega" checked onchange="alternarEndereco()"> Receber em casa</label>
-          <label><input type="radio" name="tipoEntrega" value="Retirada" onchange="alternarEndereco()"> Retirar no restaurante</label>
+          <label>
+            <input type="radio" name="tipoEntrega" value="Entrega" checked>
+            Receber em casa
+          </label>
         </div>
 
         <div id="camposEndereco">
-          <p class="checkout-aviso">Entrega grátis em todos os bairros!</p>
+          <div style="
+            background:#292020;
+            border:1px solid #ed171f;
+            border-radius:10px;
+            padding:13px;
+            color:#fff;
+            line-height:1.5;
+            margin-bottom:14px;
+          ">
+            <strong style="color:#ed171f;">🚨 Aviso sobre entregas</strong><br>
+            No momento, estamos sem motoboy próprio.
+            As entregas serão realizadas por Uber, solicitado pelo cliente.
+            O valor da corrida fica por conta do cliente.
+          </div>
+
           <div class="checkout-grid">
             <input id="enderecoCep" type="text" placeholder="CEP">
             <input id="enderecoBairro" type="text" placeholder="Bairro" required>
@@ -861,8 +877,8 @@ function montarResumoHTML() {
   const total = calcularTotalCarrinho();
   return linhas +
     `<div>Subtotal: ${moeda(total)}</div>` +
-    `<div>Entrega: <strong>Grátis (R$ 0,00)</strong></div>` +
-    `<div class="linha-total"><span>Total</span><span>${moeda(total)}</span></div>`;
+    `<div>Entrega: <strong>Uber (valor por conta do cliente)</strong></div>` +
+    `<div class="linha-total"><span>Total dos produtos</span><span>${moeda(total)}</span></div>`;
 }
 
 function alternarEndereco() {
@@ -911,7 +927,8 @@ function enviarPedidoWhatsApp(event) {
     if (cep) mensagem += `CEP: ${cep}\n`;
     if (complemento) mensagem += `Complemento: ${complemento}\n`;
     if (referencia) mensagem += `Referência: ${referencia}\n`;
-    mensagem += "Taxa de entrega: GRÁTIS\n";
+    mensagem += "Entrega: Uber (solicitado pelo cliente)\n";
+    mensagem += "Valor da corrida por conta do cliente.\n";
   }
 
   mensagem += "\nPEDIDO\n";
@@ -928,7 +945,9 @@ function enviarPedidoWhatsApp(event) {
   }
   if (observacoes) mensagem += `Observações: ${observacoes}\n`;
 
-  mensagem += `\nSubtotal: ${moeda(total)}\nEntrega: Grátis\nTOTAL: ${moeda(total)}`;
+  mensagem += `\nSubtotal dos produtos: ${moeda(total)}\n`;
+  mensagem += "Entrega: Uber (pago pelo cliente)\n";
+  mensagem += `TOTAL DOS PRODUTOS: ${moeda(total)}`;
   mensagem += "\n\nAguardo a confirmação do pedido!";
 
   const link = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(mensagem);
